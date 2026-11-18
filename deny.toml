@@ -1,0 +1,31 @@
+# cargo-deny policy: known vulnerabilities, licenses compatible with GPL-3.0-only, trusted sources.
+[graph]
+all-features = false
+
+[advisories]
+version = 2
+# Known vulnerabilities fail the check for every crate. "Unmaintained" notices are only enforced for
+# crates of this workspace: the flagged ones (zvariant, zbus_names, ttf-parser, pin-utils, chrono)
+# are transitive and have no fixed release to upgrade to, so they are tracked in SECURITY.md.
+unmaintained = "workspace"
+ignore = []
+
+[licenses]
+version = 2
+allow = [
+    "MIT", "Apache-2.0", "Apache-2.0 WITH LLVM-exception", "BSD-2-Clause", "BSD-3-Clause",
+    "ISC", "Zlib", "Unicode-3.0", "Unicode-DFS-2016", "MPL-2.0", "CC0-1.0", "0BSD",
+    "GPL-3.0-only", "GPL-3.0-or-later", "LGPL-3.0-or-later", "BSL-1.0", "OFL-1.1", "Unlicense",
+]
+confidence-threshold = 0.9
+unused-allowed-license = "allow"
+
+[bans]
+multiple-versions = "allow"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

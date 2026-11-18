@@ -37,8 +37,12 @@ If you do not need CPU package power or VRAM/hotspot temperature, do not install
   `nvapi.rs`, loading NVIDIA's library). The other crates deny or forbid it. Reviews of these two
   files are welcome.
 - **Dependencies** (several hundred crates, mostly from the Slint and async ecosystems) are not
-  audited by this project. `Cargo.lock` is committed and release builds use `--locked`, but known
-  vulnerabilities in dependencies are not yet checked automatically.
+  audited line by line by this project. `Cargo.lock` is committed, release builds use `--locked`,
+  and CI runs `cargo deny` (`deny.toml`) on every push: it fails on any known vulnerability in the
+  RustSec database, on licenses incompatible with GPL-3.0 and on unknown registries. When last run
+  it reported no known vulnerabilities, only six transitive crates flagged as unmaintained
+  (`zvariant`, `zvariant_derive`, `zbus_names`, `ttf-parser`, `pin-utils`, `chrono`) with no fixed
+  release to move to.
 - AMD, Intel and generic board sensors have never run on real hardware (see
   `docs/COMPATIBILITY.md`). They only read sysfs files, but a wrong mapping could show wrong values.
 

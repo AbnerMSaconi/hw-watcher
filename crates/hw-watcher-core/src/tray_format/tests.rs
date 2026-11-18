@@ -125,7 +125,10 @@ fn build_tray_slots_respects_count_and_multi_gpu_separation() {
         ],
         ..Default::default()
     };
-    assert!(build_tray_slots(&[TrayMetric::GpuTempC], 0, true, true, &s).is_empty());
+    assert_eq!(
+        build_tray_slots(&[TrayMetric::GpuTempC], 0, true, true, &s),
+        []
+    );
 
     let slots = build_tray_slots(
         &[TrayMetric::GpuTempC, TrayMetric::CpuTempC],

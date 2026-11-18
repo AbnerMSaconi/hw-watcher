@@ -39,7 +39,7 @@ jobs:
       HW_WATCHER_COMMIT: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.93.0
       - uses: Swatinem/rust-cache@v2
       - name: System libraries
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libwayland-dev pkg-config

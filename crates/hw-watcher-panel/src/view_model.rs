@@ -49,8 +49,7 @@ pub struct PanelView {
     pub footer_color: Color,
 }
 
-/// Builds a [`PanelView`] from `sample` and `cfg`, omitting disabled or missing sensors.
-/// `computer` is the name shown in the header.
+/// Builds a [`PanelView`] from `sample` and `cfg` (header shows `computer`), omitting missing sensors.
 pub fn build_panel_view(
     sample: &Sample,
     cfg: &PanelConfig,

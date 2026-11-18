@@ -26,6 +26,16 @@ The release workflow then:
 
 Tag releases with a signed tag: `git tag -s v<version> -m "HW Watcher <version>"`.
 
+## Signing with the project key
+
+After the workflow finishes, on the author's machine (key loaded with `ssh-add`):
+
+```bash
+gh release download v<version> -R AbnerMSaconi/hw-watcher -D /tmp/rel
+scripts/sign-release.sh ~/.ssh/hw-watcher-release.pub /tmp/rel/*.tar.gz /tmp/rel/*.sha256
+gh release upload v<version> /tmp/rel/*.sig -R AbnerMSaconi/hw-watcher
+```
+
 Binaries you share must be built with `scripts/build-release.sh`, which strips your home directory
 and username from the paths Rust embeds in panic messages (a plain `cargo build --release` does
 not). CI uses the same script.

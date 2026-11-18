@@ -24,16 +24,22 @@ cryptographic proof. Together they make copies easy to recognize and the origina
 
 ## 3. Proof for official releases
 
-Releases are built by the GitHub Actions workflow, which publishes a SHA-256 file and a signed
-**build provenance attestation** (Sigstore, keyless) for each tarball. It proves that the file was
-produced by this repository's workflow from a specific commit.
+Releases carry up to three independent proofs. Check whichever you can:
 
 ```bash
-sha256sum -c hw-watcher-0.1.0-linux-x86_64.tar.gz.sha256
-gh attestation verify hw-watcher-0.1.0-linux-x86_64.tar.gz --repo AbnerMSaconi/hw-watcher
+# 1. Integrity
+sha256sum -c hw-watcher-0.1.1-linux-x86_64.tar.gz.sha256
+
+# 2. Built by this repository's workflow from a specific commit (Sigstore attestation)
+gh attestation verify hw-watcher-0.1.1-linux-x86_64.tar.gz --repo AbnerMSaconi/hw-watcher
+
+# 3. Signed with the project's own release key (works offline)
+scripts/verify-release.sh hw-watcher-0.1.1-linux-x86_64.tar.gz
 ```
 
-A tarball that fails `gh attestation verify` did not come from the official repository.
+The release key is separate from the author's personal commit-signing key and its private half
+never leaves the author's machine (it is not a CI secret). The public key and its fingerprint are
+in `docs/keys/`. A tarball that fails any of these checks is not an official build.
 
 ## 4. Proof of authorship over time
 

@@ -13,7 +13,7 @@ Lightweight Linux telemetry for CPU, GPU, motherboard, system RAM and GPU VRAM: 
   <img src="docs/screenshots/settings-appearance.png" alt="Control Panel, Appearance tab" width="400">
 </p>
 
-<sub>Screenshots use simulated readings (`--simulate`).</sub>
+<sub>Readings are from a real machine; the computer name in the header is an example (`HW_WATCHER_NAME`).</sub>
 
 ## Install
 

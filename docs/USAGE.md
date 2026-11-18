@@ -60,6 +60,7 @@ Flags shared by `panel`, `sample` and `follow`:
   top, hide from taskbar, which metric the badge shows, tooltip sections, Control Panel and Quit.
 - The tray shows 0 to 8 badges. Each badge is one metric (total power, GPU temperature, RAM %, ...)
   and the tooltip lists the details.
+- The header shows `hw-watcher` and, on the right, the computer name (the host name, or the value of `HW_WATCHER_NAME`); turn it off in Widget → "Computer name in the header".
 - Rows and footer lines whose sensor cannot be read are hidden instead of showing blanks.
 
 ## Control Panel
@@ -98,7 +99,7 @@ defaults on the next save. Main keys: `x`, `y`, `visible`, `always_on_top`, `ski
 `interval_ms`, `separate_cpus`, `separate_gpus`, `tray_count`, `tray_metrics`, and the `[tooltip]`,
 `[widget_items]` and `[theme]` tables.
 
-Environment variable: `HW_WATCHER_WAYLAND=1` opts into the experimental native Wayland backend
+Environment variables: `HW_WATCHER_NAME` sets the computer name shown in the widget header, and `HW_WATCHER_WAYLAND=1` opts into the experimental native Wayland backend
 (see `COMPATIBILITY.md`).
 
 ## Troubleshooting

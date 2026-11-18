@@ -36,8 +36,13 @@ fn unprivileged_view_hides_total_and_elevated_footer() {
         ..Default::default()
     };
 
-    let view = build_panel_view(&sample, &PanelConfig::default(), &IdentityTranslator);
-    assert_eq!(view.source_badge, "local");
+    let view = build_panel_view(
+        &sample,
+        &PanelConfig::default(),
+        "my-pc",
+        &IdentityTranslator,
+    );
+    assert_eq!(view.source_badge, "my-pc");
     let labels: Vec<&str> = view.rows.iter().map(|r| r.label.as_str()).collect();
     assert_eq!(labels, vec!["CPU", "GPU", "RAM", "VRAM"]);
     assert_eq!(view.rows[0].col1, "55 °C");
@@ -82,7 +87,7 @@ fn multi_device_separation_and_custom_item_colors_apply() {
     cfg.theme
         .item_label_colors
         .insert("cpu:0".into(), "#56d4dd".into());
-    let view = build_panel_view(&sample, &cfg, &IdentityTranslator);
+    let view = build_panel_view(&sample, &cfg, "my-pc", &IdentityTranslator);
     let labels: Vec<&str> = view.rows.iter().map(|r| r.label.as_str()).collect();
     assert_eq!(labels, vec!["CPU 0", "CPU 1", "GPU 0", "GPU 1", "Total"]);
     assert_eq!(
@@ -90,4 +95,24 @@ fn multi_device_separation_and_custom_item_colors_apply() {
         Color::from_rgb_u8(0x56, 0xd4, 0xdd)
     );
     assert_eq!(view.rows[4].col2, "445 W");
+}
+
+#[test]
+fn badge_shows_sim_for_simulated_readings_and_can_be_hidden() {
+    let sample = Sample {
+        origin: SourceOrigin::Simulated,
+        ..Default::default()
+    };
+    let view = build_panel_view(
+        &sample,
+        &PanelConfig::default(),
+        "my-pc",
+        &IdentityTranslator,
+    );
+    assert_eq!(view.source_badge, "sim");
+
+    let mut cfg = PanelConfig::default();
+    cfg.widget_items.show_source_badge = false;
+    let hidden = build_panel_view(&Sample::default(), &cfg, "my-pc", &IdentityTranslator);
+    assert_eq!(hidden.source_badge, "");
 }

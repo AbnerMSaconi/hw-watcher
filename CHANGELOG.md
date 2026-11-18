@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+### Changed
+- The widget header now reads `hw-watcher` (it still showed the old "ENERGY" name) and shows the name of the computer in place of the `local` / `daemon` source tag. The name is the system host name, cut at 24 characters; set `HW_WATCHER_NAME` to show another one. Simulated readings are labelled `sim`. The Widget tab toggle is now "Computer name in the header".
+
 ## 0.1.1
 
 ### Fixed

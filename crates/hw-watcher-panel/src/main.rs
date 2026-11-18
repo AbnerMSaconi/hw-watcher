@@ -11,6 +11,7 @@ mod app_commands;
 mod cli;
 mod config;
 mod daemon;
+mod host;
 mod i18n;
 mod service;
 mod settings_state;

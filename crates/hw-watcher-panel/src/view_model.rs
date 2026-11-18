@@ -33,7 +33,7 @@ pub struct RowView {
 /// Complete view-model rendered by `ui/panel.slint`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PanelView {
-    /// Short origin tag (`"daemon"`, `"local"`, `"sim"`), empty if hidden.
+    /// Computer name (or `"sim"` for simulated readings) shown in the header, empty if hidden.
     pub source_badge: String,
     /// Visible metric rows (unavailable or disabled sensors are omitted).
     pub rows: Vec<RowView>,
@@ -50,7 +50,13 @@ pub struct PanelView {
 }
 
 /// Builds a [`PanelView`] from `sample` and `cfg`, omitting disabled or missing sensors.
-pub fn build_panel_view(sample: &Sample, cfg: &PanelConfig, tr: &dyn Translator) -> PanelView {
+/// `computer` is the name shown in the header.
+pub fn build_panel_view(
+    sample: &Sample,
+    cfg: &PanelConfig,
+    computer: &str,
+    tr: &dyn Translator,
+) -> PanelView {
     let mut rows = Vec::new();
     let theme = &cfg.theme;
 
@@ -75,14 +81,11 @@ pub fn build_panel_view(sample: &Sample, cfg: &PanelConfig, tr: &dyn Translator)
     }
     push_memory_rows(sample, cfg, tr, &mut rows);
 
-    let source_badge = if cfg.widget_items.show_source_badge {
-        match sample.origin {
-            SourceOrigin::Daemon => tr.translate("daemon").into_owned(),
-            SourceOrigin::Local => tr.translate("local").into_owned(),
-            SourceOrigin::Simulated => tr.translate("sim").into_owned(),
-        }
-    } else {
-        String::new()
+    // Simulated readings are labelled as such instead of carrying the real computer name.
+    let source_badge = match (cfg.widget_items.show_source_badge, sample.origin) {
+        (false, _) => String::new(),
+        (true, SourceOrigin::Simulated) => tr.translate("sim").into_owned(),
+        (true, _) => computer.to_owned(),
     };
 
     PanelView {

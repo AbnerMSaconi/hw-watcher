@@ -175,7 +175,7 @@ pub(crate) fn push_ui_if_changed(
     prev_view: &mut Option<PanelView>,
     tr: PoTranslator,
 ) {
-    let view = build_panel_view(sample, cfg, &tr);
+    let view = build_panel_view(sample, cfg, &crate::host::computer_name(), &tr);
     if prev_view.as_ref() == Some(&view) {
         return;
     }

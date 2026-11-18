@@ -251,7 +251,7 @@ export component SettingsWindow inherits Window {
                             ToggleRow { label: @tr("Hide widget from taskbar"); checked: cfg-skip-taskbar; toggled => { root.set-bool("skip_taskbar", !cfg-skip-taskbar); } }
 
                             SectionTitle { text: @tr("ROWS"); }
-                            ToggleRow { label: @tr("Source badge (daemon / local / sim)"); checked: w-badge; toggled => { root.set-bool("w_badge", !w-badge); } }
+                            ToggleRow { label: @tr("Computer name in the header"); checked: w-badge; toggled => { root.set-bool("w_badge", !w-badge); } }
                             ToggleRow { label: @tr("CPU row"); checked: w-cpu; toggled => { root.set-bool("w_cpu", !w-cpu); } }
                             ToggleRow { label: @tr("GPU row"); checked: w-gpu; toggled => { root.set-bool("w_gpu", !w-gpu); } }
                             ToggleRow { label: @tr("Total power & peak temp row"); checked: w-total; toggled => { root.set-bool("w_total", !w-total); } }

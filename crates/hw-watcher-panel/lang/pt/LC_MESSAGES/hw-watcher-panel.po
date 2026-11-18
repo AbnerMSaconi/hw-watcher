@@ -1,13 +1,10 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: hw-watcher 0.1.1\n"
+"Project-Id-Version: hw-watcher 0.1.2\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "ENERGY"
-msgstr "ENERGIA"
 
 msgid "Total"
 msgstr "Total"
@@ -87,12 +84,6 @@ msgstr "limite {w} W"
 msgid "Waiting for telemetry…"
 msgstr "Aguardando telemetria…"
 
-msgid "daemon"
-msgstr "serviço"
-
-msgid "local"
-msgstr "local"
-
 msgid "sim"
 msgstr "sim"
 
@@ -135,8 +126,8 @@ msgstr "Consumo CPU (W)"
 msgid "TASKBAR TOOLTIP SECTIONS"
 msgstr "SEÇÕES DO TOOLTIP"
 
-msgid "Source badge (daemon / local / sim)"
-msgstr "Indicador de fonte (serviço / local / sim)"
+msgid "Computer name in the header"
+msgstr "Nome do computador no cabeçalho"
 
 msgid "CPU row"
 msgstr "Linha da CPU"

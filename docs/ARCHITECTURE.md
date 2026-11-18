@@ -9,7 +9,7 @@
 | `hw-watcher-core` | `#![forbid(unsafe_code)]` | Pure domain model (`Sample`, `MemorySample`, `GpuSample`, `Capabilities`), sensor traits, RAPL/meminfo/BAR0 decoders, alert thresholds, and modular tray formatting. Zero I/O. |
 | `hw-watcher-proto` | `#![forbid(unsafe_code)]` | D-Bus wire contract (`io.github.abnermsaconi.HwWatcher1`) converting `Option<f64>` ↔ `f64::NAN`. |
 | `hw-watcher-sensors` | `#![deny(unsafe_code)]` (isolated `bar0` & `nvapi`) | Concrete implementations of `hw-watcher-core` traits (`NvmlGpuSource`, `ProcMemInfoSource`, `SysfsRaplSource`, `SysfsHwmonSource`, `Bar0TempSensor`, `NvApiVoltageSensor`) plus `LocalSensors` and `SimulatedSensors`. |
-| `hw-watcher-panel` | `#![forbid(unsafe_code)]` | Single binary (`hw-watcher`) providing the Slint floating UI, modular `ksni` tray, D-Bus `daemon`, CLI (`sample`, `follow`), and optional `service` helper. |
+| `hw-watcher-panel` | `#![deny(unsafe_code)]` | Single binary (`hw-watcher`) providing the Slint floating UI, modular `ksni` tray, D-Bus `daemon`, CLI (`sample`, `follow`), and optional `service` helper. |
 
 ## Dual-Mode Execution ("Executed vs. Installed")
 

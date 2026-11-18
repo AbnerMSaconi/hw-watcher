@@ -62,6 +62,14 @@ Unavailable sensors are hidden, never shown as errors. The detailed, honest stat
 and desktop is in [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md). Optional root-only sensors (CPU
 power, VRAM temperature) need the daemon described in the usage guide.
 
+## Security and privacy
+
+No network code, no telemetry, nothing recorded to disk. Reading sensors needs no privileges; the
+optional daemon runs as root with narrow capabilities and a read-only D-Bus interface. The project
+has **not** been independently audited, and its `unsafe` code and dependencies are listed in
+[`SECURITY.md`](SECURITY.md) along with how to verify official binaries and how to report a
+vulnerability.
+
 ## Resource usage
 
 Measured with a 250 ms refresh on an NVIDIA system: about 1% of one CPU core and roughly 32 MB PSS,

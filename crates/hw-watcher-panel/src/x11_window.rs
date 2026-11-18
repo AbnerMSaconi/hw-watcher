@@ -13,6 +13,7 @@ use slint::winit_030::winit::platform::x11::{
     EventLoopBuilderExtX11, WindowAttributesExtX11, WindowType,
 };
 use slint::winit_030::winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+use slint::winit_030::winit::window::WindowLevel;
 use slint::winit_030::{EventResult, WinitWindowAccessor};
 use slint::{ComponentHandle, PhysicalPosition};
 use x11rb::connection::Connection as _;
@@ -60,6 +61,7 @@ pub fn configure_backend(skip_taskbar: bool) {
 /// Watches `winit` window events to apply taskbar and blur hints once the X11 window maps or resizes.
 pub fn install_window_hooks(
     panel: &Panel,
+    top_flag: Arc<AtomicBool>,
     skip_flag: Arc<AtomicBool>,
     blur_flag: Arc<AtomicBool>,
     pending: Arc<AtomicBool>,
@@ -71,6 +73,7 @@ pub fn install_window_hooks(
         {
             match ev {
                 WindowEvent::RedrawRequested if pending.swap(false, Ordering::AcqRel) => {
+                    apply_always_on_top(&p, top_flag.load(Ordering::Relaxed));
                     apply_skip_taskbar(&p, skip_flag.load(Ordering::Relaxed));
                     apply_blur_behind(&p, blur_flag.load(Ordering::Relaxed));
                 }
@@ -82,6 +85,22 @@ pub fn install_window_hooks(
         }
         EventResult::Propagate
     });
+}
+
+/// Applies the always-on-top window level (`_NET_WM_STATE_ABOVE` on X11) to the mapped window.
+///
+/// The level set while the window is being created is not honored by every window manager, so it is
+/// asserted again once the window is mapped. Without this the setting reads as on but has no effect
+/// until it is toggled by hand.
+pub fn apply_always_on_top(panel: &Panel, on: bool) {
+    let level = if on {
+        WindowLevel::AlwaysOnTop
+    } else {
+        WindowLevel::Normal
+    };
+    panel
+        .window()
+        .with_winit_window(|w| w.set_window_level(level));
 }
 
 /// Applies `_NET_WM_STATE_SKIP_TASKBAR` and `_NET_WM_STATE_SKIP_PAGER` on X11 when available.

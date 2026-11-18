@@ -34,6 +34,7 @@ pub struct CollectorCtx {
     pub weak: slint::Weak<Panel>,
     pub cfg: Arc<Mutex<PanelConfig>>,
     pub visible: Arc<AtomicBool>,
+    pub always_on_top: Arc<AtomicBool>,
     pub skip_taskbar: Arc<AtomicBool>,
     pub blur_enabled: Arc<AtomicBool>,
     pub window_pending: Arc<AtomicBool>,
@@ -67,16 +68,17 @@ pub fn run_panel(start_in_tray: bool, open_settings: bool, mode: SourceMode) -> 
         weak: panel.as_weak(),
         cfg: Arc::new(Mutex::new(cfg_init.clone())),
         visible: Arc::new(AtomicBool::new(cfg_init.visible)),
+        always_on_top: Arc::new(AtomicBool::new(cfg_init.always_on_top)),
         skip_taskbar: Arc::new(AtomicBool::new(cfg_init.skip_taskbar)),
         blur_enabled: Arc::new(AtomicBool::new(cfg_init.theme.blur_enabled)),
-        window_pending: Arc::new(AtomicBool::new(
-            cfg_init.visible && (cfg_init.skip_taskbar || cfg_init.theme.blur_enabled),
-        )),
+        // Window hints are re-applied once the X11 window is actually mapped.
+        window_pending: Arc::new(AtomicBool::new(cfg_init.visible)),
     };
     let (tx, rx) = mpsc::unbounded_channel::<TrayCommand>();
 
     x11_window::install_window_hooks(
         &panel,
+        Arc::clone(&ctx.always_on_top),
         Arc::clone(&ctx.skip_taskbar),
         Arc::clone(&ctx.blur_enabled),
         Arc::clone(&ctx.window_pending),

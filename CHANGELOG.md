@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+### Fixed
+- "Always on top" was on by default but not actually applied: the window manager never received the request, so it only took effect after toggling the option by hand. It is now asserted when the window is mapped, on a normal start, when started in the tray and when shown again after hiding.
+- Settings changed in the Control Panel (blur, hide from taskbar, show/hide, interval, always on top) are now compared with the state actually applied, so turning blur off removes the effect.
+
 ## 0.1.0
 
 First public release.

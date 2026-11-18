@@ -1630,7 +1630,7 @@ checksum = "48ce8546b993eaf241d69ded33b1be6d205dd9857ec879d9d18bd05d3676e144"
 
 [[package]]
 name = "hw-watcher-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "thiserror 2.0.21",
@@ -1638,7 +1638,7 @@ dependencies = [
 
 [[package]]
 name = "hw-watcher-panel"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -1661,7 +1661,7 @@ dependencies = [
 
 [[package]]
 name = "hw-watcher-proto"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "hw-watcher-core",
  "serde",
@@ -1670,7 +1670,7 @@ dependencies = [
 
 [[package]]
 name = "hw-watcher-sensors"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "hw-watcher-core",
  "libc",

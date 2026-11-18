@@ -105,7 +105,11 @@ pub async fn handle_cmd(
         }
         TrayCommand::AlwaysOnTop(top) => {
             let cfg_snap = update_cfg(&ctx.cfg, |c| c.always_on_top = top);
-            with_panel(&ctx.weak, move |p| p.set_keep_on_top(top));
+            ctx.always_on_top.store(top, Ordering::Relaxed);
+            with_panel(&ctx.weak, move |p| {
+                p.set_keep_on_top(top);
+                x11_window::apply_always_on_top(&p, top);
+            });
             tray_coord.sync_and_refresh(latest, &cfg_snap, &tr).await;
             sync_open_settings(&cfg_snap);
         }
@@ -144,11 +148,12 @@ pub async fn handle_cmd(
                 apply_visibility(ctx, cfg_snap.visible);
             }
             let top = cfg_snap.always_on_top;
-            with_panel(&ctx.weak, move |p| {
-                if p.get_keep_on_top() != top {
+            if ctx.always_on_top.swap(top, Ordering::Relaxed) != top {
+                with_panel(&ctx.weak, move |p| {
                     p.set_keep_on_top(top);
-                }
-            });
+                    x11_window::apply_always_on_top(&p, top);
+                });
+            }
             let skip = cfg_snap.skip_taskbar;
             if ctx.skip_taskbar.swap(skip, Ordering::Relaxed) != skip {
                 with_panel(&ctx.weak, move |p| x11_window::apply_skip_taskbar(&p, skip));
@@ -176,9 +181,7 @@ pub async fn handle_cmd(
 
 fn apply_visibility(ctx: &CollectorCtx, show: bool) {
     ctx.visible.store(show, Ordering::Relaxed);
-    if show
-        && (ctx.skip_taskbar.load(Ordering::Relaxed) || ctx.blur_enabled.load(Ordering::Relaxed))
-    {
+    if show {
         ctx.window_pending.store(true, Ordering::Release);
     }
     with_panel(&ctx.weak, move |p| {

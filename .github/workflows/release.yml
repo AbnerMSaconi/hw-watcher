@@ -43,7 +43,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: System libraries
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libwayland-dev pkg-config
-      - run: cargo build --release --locked
+      - name: Build (paths remapped so no build directory leaks into the binary)
+        run: scripts/build-release.sh
       - name: Package
         run: |
           NAME=hw-watcher-${{ needs.verify.outputs.version }}-linux-${{ matrix.arch }}

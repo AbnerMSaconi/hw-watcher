@@ -26,4 +26,8 @@ The release workflow then:
 
 Tag releases with a signed tag: `git tag -s v<version> -m "HW Watcher <version>"`.
 
+Binaries you share must be built with `scripts/build-release.sh`, which strips your home directory
+and username from the paths Rust embeds in panic messages (a plain `cargo build --release` does
+not). CI uses the same script.
+
 A binary built locally without git history reports `commit unknown`.

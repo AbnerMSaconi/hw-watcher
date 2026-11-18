@@ -1,0 +1,58 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/hw-watcher-core",
+    "crates/hw-watcher-proto",
+    "crates/hw-watcher-sensors",
+    "crates/hw-watcher-panel",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.93"
+license = "GPL-3.0-only"
+
+[workspace.dependencies]
+hw-watcher-core = { path = "crates/hw-watcher-core" }
+hw-watcher-proto = { path = "crates/hw-watcher-proto" }
+hw-watcher-sensors = { path = "crates/hw-watcher-sensors" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.9"
+thiserror = "2"
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio = { version = "1", features = ["rt", "macros", "time", "sync", "signal"] }
+zbus = { version = "5", default-features = false, features = ["tokio"] }
+ksni = { version = "0.3", default-features = false, features = ["tokio"] }
+slint = { version = "1", default-features = false, features = ["std", "compat-1-2", "backend-winit-x11", "backend-winit-wayland", "renderer-software", "unstable-winit-030"] }
+slint-build = "1"
+x11rb = "0.13"
+nvml-wrapper = "0.13"
+memmap2 = "0.9"
+libloading = "0.9"
+libc = "0.2"
+tempfile = "3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+cast_possible_truncation = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+opt-level = "s"
+panic = "abort"

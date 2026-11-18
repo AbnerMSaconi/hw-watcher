@@ -1,0 +1,30 @@
+[package]
+name = "hw-watcher-sensors"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+cast_possible_truncation = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+
+[dependencies]
+hw-watcher-core.workspace = true
+libc.workspace = true
+libloading.workspace = true
+memmap2.workspace = true
+nvml-wrapper.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

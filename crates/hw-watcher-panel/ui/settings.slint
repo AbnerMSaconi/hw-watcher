@@ -1,0 +1,512 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 AbnerMSaconi
+
+// Lightweight Control Panel & Settings window for HW Watcher.
+import "../fonts/JetBrainsMono.ttf";
+import {
+    ChipButton, ColorButton, FieldRow, Hint, OpacityStepper, RgbBar, SectionTitle, Stepper,
+    ToggleRow,
+} from "settings_widgets.slint";
+
+export struct TrayMetricRow {
+    key: string,
+    label: string,
+    enabled: bool,
+}
+
+export struct ItemColorRow {
+    key: string,
+    label: string,
+    color: color,
+    hex: string,
+    is-custom: bool,
+}
+
+export component SettingsWindow inherits Window {
+    in-out property <int> active-tab: 0;
+    in property <string> hardware-summary: "";
+    in property <string> app-version: "";
+    in property <string> legal-notice: "";
+
+    // General & Hardware
+    in property <bool> cfg-visible: true;
+    in property <bool> cfg-always-on-top: true;
+    in property <bool> cfg-skip-taskbar: true;
+    in property <int> cfg-interval-ms: 1000;
+    in property <bool> cfg-separate-cpus: false;
+    in property <bool> cfg-separate-gpus: false;
+
+    // Taskbar (tray) & Tooltip
+    in property <int> cfg-tray-count: 1;
+    in property <[TrayMetricRow]> tray-metric-rows;
+    in property <bool> tip-power: true;
+    in property <bool> tip-temps: true;
+    in property <bool> tip-memory: true;
+    in property <bool> tip-clocks: true;
+    in property <bool> tip-board: true;
+
+    // Floating widget items
+    in property <bool> w-badge: true;
+    in property <bool> w-cpu: true;
+    in property <bool> w-gpu: true;
+    in property <bool> w-total: true;
+    in property <bool> w-ram: true;
+    in property <bool> w-vram: true;
+    in property <bool> w-gpu-clocks: true;
+    in property <bool> w-gpu-elevated: true;
+    in property <bool> w-board-v12: true;
+    in property <bool> w-board-rails: false;
+    in property <bool> w-board-temps: false;
+    in property <bool> w-board-fans: false;
+
+    // Theme, transparency, blur, per-item colors
+    in property <color> th-bg-color: #141418;
+    in property <string> th-bg-hex: "#141418";
+    in property <int> th-bg-opacity: 88;
+    in property <color> th-border-color: #ffffff;
+    in property <string> th-border-hex: "#ffffff";
+    in property <int> th-border-opacity: 16;
+    in property <bool> th-blur-enabled: false;
+    in property <color> th-tray-bg-color: #141418;
+    in property <string> th-tray-bg-hex: "#141418";
+    in property <int> th-tray-bg-opacity: 92;
+    in property <color> th-text-color: #e8e8e8;
+    in property <string> th-text-hex: "#e8e8e8";
+    in property <color> th-muted-color: #8a8a8a;
+    in property <string> th-muted-hex: "#8a8a8a";
+    in property <color> th-alert-color: #ffb347;
+    in property <string> th-alert-hex: "#ffb347";
+    in property <color> th-critical-color: #ff5c5c;
+    in property <string> th-critical-hex: "#ff5c5c";
+    in property <[ItemColorRow]> item-color-rows;
+
+    // Inline color editor state
+    in property <string> active-color-target: "bg";
+    in property <string> active-color-label: "Background";
+    in property <color> active-color-preview: #141418;
+    in property <string> active-color-hex: "#141418";
+    in property <int> active-r: 20;
+    in property <int> active-g: 20;
+    in property <int> active-b: 24;
+    in property <[color]> palette-swatches;
+    in property <[string]> palette-hexes;
+
+    callback set-bool(string, bool);
+    callback set-int(string, int);
+    callback toggle-tray-metric(string);
+    callback move-tray-metric(string, int);
+    callback select-color-target(string, string);
+    callback set-active-rgb(int, int, int);
+    callback set-active-hex(string);
+    callback clear-item-color(string);
+    callback apply-preset(string);
+    callback reset-defaults();
+    callback close-settings();
+
+    title: @tr("HW Watcher — Control Panel");
+    default-font-family: "JetBrains Mono";
+    background: #14161b;
+    width: 560px;
+    height: 640px;
+
+    VerticalLayout {
+        padding: 12px;
+        spacing: 10px;
+
+        // Header
+        HorizontalLayout {
+            spacing: 8px;
+            Text {
+                text: @tr("CONTROL PANEL");
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 1.2px;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            Text {
+                text: hardware-summary;
+                color: #8a8a8a;
+                font-size: 11px;
+                vertical-alignment: center;
+            }
+            Text {
+                text: "v" + app-version;
+                color: #5f6472;
+                font-size: 11px;
+                vertical-alignment: center;
+            }
+        }
+
+        // Tabs
+        HorizontalLayout {
+            spacing: 6px;
+            ChipButton {
+                text: @tr("General");
+                active: active-tab == 0;
+                horizontal-stretch: 1;
+                clicked => { active-tab = 0; }
+            }
+            ChipButton {
+                text: @tr("Taskbar");
+                active: active-tab == 1;
+                horizontal-stretch: 1;
+                clicked => { active-tab = 1; }
+            }
+            ChipButton {
+                text: @tr("Widget");
+                active: active-tab == 2;
+                horizontal-stretch: 1;
+                clicked => { active-tab = 2; }
+            }
+            ChipButton {
+                text: @tr("Appearance");
+                active: active-tab == 3;
+                horizontal-stretch: 1;
+                clicked => { active-tab = 3; }
+            }
+        }
+
+        // Tab content
+        Rectangle {
+            vertical-stretch: 1;
+            background: #191b22;
+            border-radius: 8px;
+            border-width: 1px;
+            border-color: #ffffff18;
+            clip: true;
+
+            VerticalLayout {
+                Flickable {
+                    vertical-stretch: 1;
+                    content-height: tab-content.preferred-height + 16px;
+
+                    tab-content := VerticalLayout {
+                        width: parent.width;
+                        padding: 12px;
+                        spacing: 6px;
+                        alignment: start;
+
+                        if active-tab == 0: VerticalLayout {
+                            spacing: 6px;
+                            SectionTitle { text: @tr("UPDATES"); first: true; }
+                            FieldRow {
+                                label: @tr("Update interval");
+                                ChipButton { text: "250ms"; active: cfg-interval-ms == 250; clicked => { root.set-int("interval_ms", 250); } }
+                                ChipButton { text: "500ms"; active: cfg-interval-ms == 500; clicked => { root.set-int("interval_ms", 500); } }
+                                ChipButton { text: "1s"; active: cfg-interval-ms == 1000; clicked => { root.set-int("interval_ms", 1000); } }
+                                ChipButton { text: "2s"; active: cfg-interval-ms == 2000; clicked => { root.set-int("interval_ms", 2000); } }
+                                ChipButton { text: "5s"; active: cfg-interval-ms == 5000; clicked => { root.set-int("interval_ms", 5000); } }
+                            }
+
+                            SectionTitle { text: @tr("MULTI-DEVICE HARDWARE"); }
+                            ToggleRow {
+                                label: @tr("List multiple CPUs separately (when >1 CPU)");
+                                checked: cfg-separate-cpus;
+                                toggled => { root.set-bool("separate_cpus", !cfg-separate-cpus); }
+                            }
+                            ToggleRow {
+                                label: @tr("List multiple GPUs separately (when >1 GPU)");
+                                checked: cfg-separate-gpus;
+                                toggled => { root.set-bool("separate_gpus", !cfg-separate-gpus); }
+                            }
+                        }
+
+                        if active-tab == 1: VerticalLayout {
+                            spacing: 6px;
+                            SectionTitle { text: @tr("TASKBAR (SYSTEM TRAY) ITEMS"); first: true; }
+                            Stepper {
+                                label: @tr("How many items stay in taskbar");
+                                value: cfg-tray-count;
+                                changed(v) => { root.set-int("tray_count", v); }
+                            }
+                            Hint { text: @tr("Enabled metrics are shown in this order. Use the arrows to change priority."); }
+                            for tm in tray-metric-rows: HorizontalLayout {
+                                spacing: 6px;
+                                height: 26px;
+                                ToggleRow {
+                                    horizontal-stretch: 1;
+                                    label: tm.label;
+                                    checked: tm.enabled;
+                                    toggled => { root.toggle-tray-metric(tm.key); }
+                                }
+                                ChipButton { text: "↑"; width: 28px; clicked => { root.move-tray-metric(tm.key, -1); } }
+                                ChipButton { text: "↓"; width: 28px; clicked => { root.move-tray-metric(tm.key, 1); } }
+                            }
+
+                            SectionTitle { text: @tr("TASKBAR TOOLTIP SECTIONS"); }
+                            ToggleRow { label: @tr("Power"); checked: tip-power; toggled => { root.set-bool("tip_power", !tip-power); } }
+                            ToggleRow { label: @tr("Temperatures"); checked: tip-temps; toggled => { root.set-bool("tip_temps", !tip-temps); } }
+                            ToggleRow { label: @tr("Memory (RAM / VRAM)"); checked: tip-memory; toggled => { root.set-bool("tip_memory", !tip-memory); } }
+                            ToggleRow { label: @tr("Clocks & load"); checked: tip-clocks; toggled => { root.set-bool("tip_clocks", !tip-clocks); } }
+                            ToggleRow { label: @tr("Board (+12V)"); checked: tip-board; toggled => { root.set-bool("tip_board", !tip-board); } }
+                        }
+
+                        if active-tab == 2: VerticalLayout {
+                            spacing: 6px;
+                            SectionTitle { text: @tr("WINDOW"); first: true; }
+                            ToggleRow { label: @tr("Show floating widget"); checked: cfg-visible; toggled => { root.set-bool("visible", !cfg-visible); } }
+                            ToggleRow { label: @tr("Always on top"); checked: cfg-always-on-top; toggled => { root.set-bool("always_on_top", !cfg-always-on-top); } }
+                            ToggleRow { label: @tr("Hide widget from taskbar"); checked: cfg-skip-taskbar; toggled => { root.set-bool("skip_taskbar", !cfg-skip-taskbar); } }
+
+                            SectionTitle { text: @tr("ROWS"); }
+                            ToggleRow { label: @tr("Source badge (daemon / local / sim)"); checked: w-badge; toggled => { root.set-bool("w_badge", !w-badge); } }
+                            ToggleRow { label: @tr("CPU row"); checked: w-cpu; toggled => { root.set-bool("w_cpu", !w-cpu); } }
+                            ToggleRow { label: @tr("GPU row"); checked: w-gpu; toggled => { root.set-bool("w_gpu", !w-gpu); } }
+                            ToggleRow { label: @tr("Total power & peak temp row"); checked: w-total; toggled => { root.set-bool("w_total", !w-total); } }
+                            ToggleRow { label: @tr("RAM usage row"); checked: w-ram; toggled => { root.set-bool("w_ram", !w-ram); } }
+                            ToggleRow { label: @tr("VRAM usage row"); checked: w-vram; toggled => { root.set-bool("w_vram", !w-vram); } }
+
+                            SectionTitle { text: @tr("GPU DETAILS"); }
+                            ToggleRow { label: @tr("GPU clocks, load & power limit"); checked: w-gpu-clocks; toggled => { root.set-bool("w_gpu_clocks", !w-gpu-clocks); } }
+                            ToggleRow { label: @tr("GPU VRAM temp, Hotspot & voltage"); checked: w-gpu-elevated; toggled => { root.set-bool("w_gpu_elevated", !w-gpu-elevated); } }
+
+                            SectionTitle { text: @tr("BOARD DETAILS"); }
+                            ToggleRow { label: @tr("Board +12V rail"); checked: w-board-v12; toggled => { root.set-bool("w_board_v12", !w-board-v12); } }
+                            ToggleRow { label: @tr("Board voltages (+5V, +3.3V, Vcore, SoC, DRAM)"); checked: w-board-rails; toggled => { root.set-bool("w_board_rails", !w-board-rails); } }
+                            ToggleRow { label: @tr("Board temperatures (VRM, Socket, Sys, PCH)"); checked: w-board-temps; toggled => { root.set-bool("w_board_temps", !w-board-temps); } }
+                            ToggleRow { label: @tr("Board fan speeds (RPM)"); checked: w-board-fans; toggled => { root.set-bool("w_board_fans", !w-board-fans); } }
+                        }
+
+                        if active-tab == 3: VerticalLayout {
+                            spacing: 6px;
+                            SectionTitle { text: @tr("PRESETS"); first: true; }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                ChipButton { text: @tr("Dark"); horizontal-stretch: 1; clicked => { root.apply-preset("dark"); } }
+                                ChipButton { text: "Nord"; horizontal-stretch: 1; clicked => { root.apply-preset("nord"); } }
+                                ChipButton { text: "Dracula"; horizontal-stretch: 1; clicked => { root.apply-preset("dracula"); } }
+                                ChipButton { text: @tr("Amber"); horizontal-stretch: 1; clicked => { root.apply-preset("amber"); } }
+                                ChipButton { text: @tr("Contrast"); horizontal-stretch: 1; clicked => { root.apply-preset("contrast"); } }
+                                ChipButton { text: @tr("Glass"); horizontal-stretch: 1; clicked => { root.apply-preset("glass"); } }
+                            }
+
+                            SectionTitle { text: @tr("WIDGET SURFACE"); }
+                            ColorButton {
+                                label: @tr("Widget background");
+                                swatch: th-bg-color;
+                                hex: th-bg-hex;
+                                selected: active-color-target == "bg";
+                                clicked => { root.select-color-target("bg", @tr("Widget background")); }
+                            }
+                            OpacityStepper { label: @tr("Widget opacity"); value: th-bg-opacity; changed(v) => { root.set-int("bg_opacity", v); } }
+                            ColorButton {
+                                label: @tr("Widget border");
+                                swatch: th-border-color;
+                                hex: th-border-hex;
+                                selected: active-color-target == "border";
+                                clicked => { root.select-color-target("border", @tr("Widget border")); }
+                            }
+                            OpacityStepper { label: @tr("Border opacity"); value: th-border-opacity; changed(v) => { root.set-int("border_opacity", v); } }
+                            ToggleRow {
+                                label: @tr("Blur behind widget");
+                                checked: th-blur-enabled;
+                                toggled => { root.set-bool("blur_enabled", !th-blur-enabled); }
+                            }
+                            Hint { text: @tr("Blur needs a compositor that supports it (KWin on X11) and an opacity below 100%."); }
+
+                            SectionTitle { text: @tr("TEXT & STATUS COLORS"); }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                ColorButton {
+                                    horizontal-stretch: 1;
+                                    label: @tr("Normal");
+                                    swatch: th-text-color;
+                                    hex: th-text-hex;
+                                    selected: active-color-target == "text";
+                                    clicked => { root.select-color-target("text", @tr("Normal")); }
+                                }
+                                ColorButton {
+                                    horizontal-stretch: 1;
+                                    label: @tr("Muted");
+                                    swatch: th-muted-color;
+                                    hex: th-muted-hex;
+                                    selected: active-color-target == "muted";
+                                    clicked => { root.select-color-target("muted", @tr("Muted")); }
+                                }
+                            }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                ColorButton {
+                                    horizontal-stretch: 1;
+                                    label: @tr("Alert");
+                                    swatch: th-alert-color;
+                                    hex: th-alert-hex;
+                                    selected: active-color-target == "alert";
+                                    clicked => { root.select-color-target("alert", @tr("Alert")); }
+                                }
+                                ColorButton {
+                                    horizontal-stretch: 1;
+                                    label: @tr("Critical");
+                                    swatch: th-critical-color;
+                                    hex: th-critical-hex;
+                                    selected: active-color-target == "critical";
+                                    clicked => { root.select-color-target("critical", @tr("Critical")); }
+                                }
+                            }
+
+                            SectionTitle { text: @tr("TASKBAR BADGE"); }
+                            ColorButton {
+                                label: @tr("Taskbar badge background");
+                                swatch: th-tray-bg-color;
+                                hex: th-tray-bg-hex;
+                                selected: active-color-target == "tray_bg";
+                                clicked => { root.select-color-target("tray_bg", @tr("Taskbar badge background")); }
+                            }
+                            OpacityStepper { label: @tr("Taskbar badge opacity"); value: th-tray-bg-opacity; changed(v) => { root.set-int("tray_bg_opacity", v); } }
+
+                            SectionTitle { text: @tr("PER-ITEM LABEL COLORS"); }
+                            for ic in item-color-rows: HorizontalLayout {
+                                spacing: 6px;
+                                height: 28px;
+                                Rectangle {
+                                    horizontal-stretch: 1;
+                                    background: active-color-target == ("item:" + ic.key) ? #4ea1ff22 : #1d1f26;
+                                    border-radius: 6px;
+                                    border-width: 1px;
+                                    border-color: active-color-target == ("item:" + ic.key) ? #4ea1ff : #ffffff18;
+
+                                    TouchArea {
+                                        mouse-cursor: pointer;
+                                        clicked => { root.select-color-target("item:" + ic.key, ic.label); }
+                                    }
+                                    HorizontalLayout {
+                                        padding-left: 8px;
+                                        padding-right: 8px;
+                                        spacing: 8px;
+                                        Rectangle {
+                                            width: 16px;
+                                            height: 16px;
+                                            y: (parent.height - self.height) / 2;
+                                            border-radius: 4px;
+                                            background: ic.color;
+                                            border-width: 1px;
+                                            border-color: #ffffff44;
+                                        }
+                                        Text {
+                                            text: ic.label;
+                                            color: ic.color;
+                                            font-size: 12px;
+                                            font-weight: 700;
+                                            vertical-alignment: center;
+                                            horizontal-stretch: 1;
+                                        }
+                                        Text {
+                                            text: ic.hex;
+                                            color: #8a8a8a;
+                                            font-size: 10px;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+                                if ic.is-custom: ChipButton {
+                                    text: @tr("Clear");
+                                    width: 58px;
+                                    clicked => { root.clear-item-color(ic.key); }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Color editor pinned below the list, always visible on the Appearance tab.
+                if active-tab == 3: Rectangle {
+                    background: #14161c;
+                    border-width: 1px;
+                    border-color: #4ea1ff66;
+
+                    VerticalLayout {
+                        padding: 10px;
+                        spacing: 6px;
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Rectangle {
+                                width: 18px;
+                                height: 18px;
+                                border-radius: 4px;
+                                background: active-color-preview;
+                                border-width: 1px;
+                                border-color: #ffffff55;
+                            }
+                            Text {
+                                text: @tr("Editing:") + " " + active-color-label;
+                                color: #ffffff;
+                                font-size: 11px;
+                                font-weight: 700;
+                                vertical-alignment: center;
+                                horizontal-stretch: 1;
+                            }
+                            Text {
+                                text: active-color-hex;
+                                color: #8a8a8a;
+                                font-size: 11px;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 4px;
+                            for idx in 16: Rectangle {
+                                horizontal-stretch: 1;
+                                height: 18px;
+                                border-radius: 4px;
+                                background: palette-swatches[idx];
+                                border-width: 1px;
+                                border-color: #ffffff38;
+                                TouchArea {
+                                    mouse-cursor: pointer;
+                                    clicked => { root.set-active-hex(palette-hexes[idx]); }
+                                }
+                            }
+                        }
+
+                        RgbBar {
+                            channel: "R";
+                            value: active-r;
+                            bar-color: #ff5c5c;
+                            changed(v) => { root.set-active-rgb(v, active-g, active-b); }
+                        }
+                        RgbBar {
+                            channel: "G";
+                            value: active-g;
+                            bar-color: #50fa7b;
+                            changed(v) => { root.set-active-rgb(active-r, v, active-b); }
+                        }
+                        RgbBar {
+                            channel: "B";
+                            value: active-b;
+                            bar-color: #4ea1ff;
+                            changed(v) => { root.set-active-rgb(active-r, active-g, v); }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Footer
+        HorizontalLayout {
+            spacing: 8px;
+            ChipButton {
+                text: @tr("Reset defaults");
+                width: 130px;
+                clicked => { root.reset-defaults(); }
+            }
+            Text {
+                text: legal-notice;
+                color: #5f6472;
+                font-size: 10px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            ChipButton {
+                text: @tr("Close");
+                active: true;
+                width: 90px;
+                clicked => { root.close-settings(); }
+            }
+        }
+    }
+}

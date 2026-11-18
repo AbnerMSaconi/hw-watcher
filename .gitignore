@@ -1,0 +1,38 @@
+# Build output
+/target/
+**/*.rs.bk
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Telemetry recordings and logs (hardware/usage data, never publish)
+*.csv
+*.log
+logs/
+
+# Local user config and secrets
+config.toml
+.env
+.env.*
+*.pem
+*.key
+*.secret
+credentials*
+
+# Session notes, scratch and private material
+docs/SESSION-NOTES.md
+*-private/
+scratch/
+*.bak
+*.orig
+*.swp
+*~
+
+# Editors, OS and AI tooling
+.vscode/
+.idea/
+.claude/
+CLAUDE.md
+.DS_Store
+Thumbs.db

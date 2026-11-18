@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=HW Watcher
+Comment=Floating CPU, GPU, RAM and VRAM telemetry panel
+Exec=/usr/local/bin/hw-watcher panel --tray
+Terminal=false
+Categories=System;Monitor;
+X-GNOME-Autostart-enabled=true

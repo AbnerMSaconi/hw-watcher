@@ -1,0 +1,12 @@
+[Unit]
+Description=HW Watcher: user-level floating panel and tray icon
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/hw-watcher panel --tray
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

@@ -1,0 +1,311 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 AbnerMSaconi
+
+// Reusable Control Panel building blocks.
+import "../fonts/JetBrainsMono.ttf";
+
+export component ToggleRow inherits Rectangle {
+    in property <string> label;
+    in property <bool> checked;
+    callback toggled();
+
+    height: 28px;
+    background: ta.has-hover ? #ffffff0d : transparent;
+    border-radius: 6px;
+
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.toggled(); }
+    }
+
+    HorizontalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+        spacing: 10px;
+
+        Text {
+            text: label;
+            color: #e8e8e8;
+            font-size: 12px;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+
+        Rectangle {
+            width: 34px;
+            height: 18px;
+            y: (parent.height - self.height) / 2;
+            border-radius: 9px;
+            background: checked ? #4ea1ff : #32343d;
+            border-width: 1px;
+            border-color: checked ? #7abaff : #4b4e5a;
+
+            Rectangle {
+                width: 12px;
+                height: 12px;
+                border-radius: 6px;
+                y: 3px;
+                x: checked ? 19px : 3px;
+                background: #ffffff;
+            }
+        }
+    }
+}
+
+export component ChipButton inherits Rectangle {
+    in property <string> text;
+    in property <bool> active: false;
+    callback clicked();
+
+    height: 26px;
+    min-width: 54px;
+    background: active ? #4ea1ff33 : (ta.has-hover ? #ffffff18 : #23252d);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: active ? #4ea1ff : #ffffff20;
+
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+
+    Text {
+        text: root.text;
+        color: active ? #ffffff : #d0d3dc;
+        font-size: 11px;
+        font-weight: active ? 700 : 500;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+export component ColorButton inherits Rectangle {
+    in property <string> label;
+    in property <color> swatch;
+    in property <string> hex;
+    in property <bool> selected: false;
+    callback clicked();
+
+    height: 28px;
+    background: selected ? #4ea1ff22 : (ta.has-hover ? #ffffff0c : #1d1f26);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: selected ? #4ea1ff : #ffffff18;
+
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+
+    HorizontalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+        spacing: 8px;
+
+        Rectangle {
+            width: 16px;
+            height: 16px;
+            y: (parent.height - self.height) / 2;
+            border-radius: 4px;
+            background: swatch;
+            border-width: 1px;
+            border-color: #ffffff44;
+        }
+
+        Text {
+            text: label;
+            color: #e8e8e8;
+            font-size: 11px;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+
+        Text {
+            text: hex;
+            color: #8a8a8a;
+            font-size: 10px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+export component OpacityStepper inherits HorizontalLayout {
+    in property <string> label;
+    in property <int> value;
+    callback changed(int);
+
+    spacing: 6px;
+    height: 26px;
+
+    Text {
+        text: label;
+        color: #c8ccd6;
+        font-size: 11px;
+        vertical-alignment: center;
+        horizontal-stretch: 1;
+    }
+    ChipButton {
+        text: "-10";
+        width: 34px;
+        clicked => { root.changed(max(0, value - 10)); }
+    }
+    ChipButton {
+        text: "-2";
+        width: 30px;
+        clicked => { root.changed(max(0, value - 2)); }
+    }
+    Text {
+        text: value + "%";
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        width: 38px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    ChipButton {
+        text: "+2";
+        width: 30px;
+        clicked => { root.changed(min(100, value + 2)); }
+    }
+    ChipButton {
+        text: "+10";
+        width: 34px;
+        clicked => { root.changed(min(100, value + 10)); }
+    }
+}
+
+export component RgbBar inherits HorizontalLayout {
+    in property <string> channel;
+    in property <int> value;
+    in property <color> bar-color;
+    callback changed(int);
+
+    spacing: 6px;
+    height: 22px;
+
+    Text {
+        text: channel;
+        color: #b8bcc8;
+        font-size: 11px;
+        font-weight: 700;
+        width: 16px;
+        vertical-alignment: center;
+    }
+    ChipButton {
+        text: "-15";
+        width: 34px;
+        height: 22px;
+        clicked => { root.changed(max(0, value - 15)); }
+    }
+    Rectangle {
+        horizontal-stretch: 1;
+        height: 12px;
+        y: 5px;
+        border-radius: 4px;
+        background: #252730;
+        border-width: 1px;
+        border-color: #ffffff20;
+
+        Rectangle {
+            x: 0px;
+            y: 0px;
+            height: parent.height;
+            width: parent.width * (clamp(value, 0, 255) / 255);
+            border-radius: 4px;
+            background: bar-color;
+        }
+
+        bar-ta := TouchArea {
+            mouse-cursor: pointer;
+            clicked => {
+                root.changed(round(clamp(self.mouse-x / parent.width, 0, 1) * 255));
+            }
+            moved => {
+                if (self.pressed) {
+                    root.changed(round(clamp(self.mouse-x / parent.width, 0, 1) * 255));
+                }
+            }
+        }
+    }
+    ChipButton {
+        text: "+15";
+        width: 34px;
+        height: 22px;
+        clicked => { root.changed(min(255, value + 15)); }
+    }
+    Text {
+        text: value;
+        color: #e8e8e8;
+        font-size: 11px;
+        width: 28px;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+    }
+}
+
+export component SectionTitle inherits VerticalLayout {
+    in property <string> text;
+    in property <bool> first: false;
+    spacing: 6px;
+
+    if !first: Rectangle {
+        height: 1px;
+        background: #ffffff12;
+    }
+    Text {
+        text: root.text;
+        color: #8a8a8a;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+    }
+}
+
+export component Hint inherits Text {
+    color: #7b8090;
+    font-size: 10px;
+    wrap: word-wrap;
+}
+
+export component FieldRow inherits HorizontalLayout {
+    in property <string> label;
+    spacing: 6px;
+    height: 28px;
+
+    Text {
+        text: root.label;
+        color: #e8e8e8;
+        font-size: 12px;
+        vertical-alignment: center;
+        horizontal-stretch: 1;
+    }
+    @children
+}
+
+export component Stepper inherits FieldRow {
+    in property <int> value;
+    in property <int> min-value: 0;
+    in property <int> max-value: 8;
+    callback changed(int);
+
+    ChipButton {
+        text: "-";
+        width: 32px;
+        clicked => { root.changed(max(root.min-value, root.value - 1)); }
+    }
+    Text {
+        text: root.value;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        width: 28px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    ChipButton {
+        text: "+";
+        width: 32px;
+        clicked => { root.changed(min(root.max-value, root.value + 1)); }
+    }
+}

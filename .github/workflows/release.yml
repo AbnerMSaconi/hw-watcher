@@ -1,0 +1,89 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write       # keyless signing identity for build provenance
+  attestations: write   # publish signed provenance for the tarballs
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        name: Tag must match the workspace version and have release notes
+        run: |
+          VERSION=$(sed -n '/^\[workspace.package\]/,/^\[/{s/^version = "\(.*\)"/\1/p}' Cargo.toml)
+          [ "v$VERSION" = "${{ github.ref_name }}" ] || { echo "tag ${{ github.ref_name }} does not match Cargo.toml version $VERSION"; exit 1; }
+          scripts/release-notes.sh "$VERSION" > release-notes.md
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.md
+
+  build:
+    needs: verify
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-22.04, arch: x86_64 }
+          - { os: ubuntu-22.04-arm, arch: aarch64 }
+    runs-on: ${{ matrix.os }}
+    env:
+      HW_WATCHER_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: System libraries
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libwayland-dev pkg-config
+      - run: cargo build --release --locked
+      - name: Package
+        run: |
+          NAME=hw-watcher-${{ needs.verify.outputs.version }}-linux-${{ matrix.arch }}
+          mkdir "$NAME"
+          cp target/release/hw-watcher README.md LICENSE NOTICE THIRD_PARTY.md CHANGELOG.md "$NAME"/
+          cp -r packaging scripts docs "$NAME"/
+          ln -s hw-watcher "$NAME"/hww
+          {
+            echo "name: hw-watcher"
+            echo "version: ${{ needs.verify.outputs.version }}"
+            echo "commit: ${{ github.sha }}"
+            echo "target: linux-${{ matrix.arch }} (glibc $(ldd --version | head -1 | awk '{print $NF}'))"
+            echo "built: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "rustc: $(rustc --version)"
+          } > "$NAME/BUILD-INFO.txt"
+          tar czf "$NAME.tar.gz" "$NAME"
+          sha256sum "$NAME.tar.gz" > "$NAME.tar.gz.sha256"
+      - name: Sign build provenance (ties the tarball to this repo, commit and workflow)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: hw-watcher-*.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.arch }}
+          path: hw-watcher-*.tar.gz*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*"
+          merge-multiple: true
+          path: out
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: HW Watcher ${{ github.ref_name }}
+          body_path: out/release-notes.md
+          prerelease: ${{ startsWith(github.ref_name, 'v0.') }}
+          files: |
+            out/hw-watcher-*.tar.gz
+            out/hw-watcher-*.tar.gz.sha256

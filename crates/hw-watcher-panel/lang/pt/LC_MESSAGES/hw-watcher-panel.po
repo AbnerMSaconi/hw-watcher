@@ -1,0 +1,286 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: hw-watcher 0.1.0\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "ENERGY"
+msgstr "ENERGIA"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "RAM"
+msgstr "RAM"
+
+msgid "VRAM"
+msgstr "VRAM"
+
+msgid "Hide"
+msgstr "Esconder"
+
+msgid "Show / Hide"
+msgstr "Mostrar / esconder"
+
+msgid "Always on top"
+msgstr "Sempre no topo"
+
+msgid "Hide from taskbar"
+msgstr "Ocultar da barra de tarefas"
+
+msgid "✓ Always on top"
+msgstr "✓ Sempre no topo"
+
+msgid "Quit"
+msgstr "Sair"
+
+msgid "Tray icon metric"
+msgstr "Métrica do ícone"
+
+msgid "Tooltip items"
+msgstr "Itens do tooltip"
+
+msgid "Power"
+msgstr "Consumo"
+
+msgid "Temperatures"
+msgstr "Temperaturas"
+
+msgid "Memory (RAM / VRAM)"
+msgstr "Memória (RAM / VRAM)"
+
+msgid "Clocks & load"
+msgstr "Clocks e uso"
+
+msgid "Board (+12V)"
+msgstr "Placa (+12V)"
+
+msgid "Total power (W)"
+msgstr "Consumo total (W)"
+
+msgid "GPU power (W)"
+msgstr "Consumo GPU (W)"
+
+msgid "GPU clock (MHz)"
+msgstr "Clock GPU (MHz)"
+
+msgid "RAM usage (%)"
+msgstr "Uso de RAM (%)"
+
+msgid "VRAM usage (%)"
+msgstr "Uso de VRAM (%)"
+
+msgid "GPU temp (°C)"
+msgstr "Temp. GPU (°C)"
+
+msgid "CPU temp (°C)"
+msgstr "Temp. CPU (°C)"
+
+msgid "Total {w} W"
+msgstr "Total {w} W"
+
+msgid "limit {w} W"
+msgstr "limite {w} W"
+
+msgid "Waiting for telemetry…"
+msgstr "Aguardando telemetria…"
+
+msgid "daemon"
+msgstr "serviço"
+
+msgid "local"
+msgstr "local"
+
+msgid "sim"
+msgstr "sim"
+
+msgid "Control Panel..."
+msgstr "Painel de controle..."
+
+msgid "HW Watcher — Control Panel"
+msgstr "HW Watcher — Painel de Controle"
+
+msgid "CONTROL PANEL"
+msgstr "PAINEL DE CONTROLE"
+
+msgid "Show floating widget"
+msgstr "Mostrar widget flutuante"
+
+msgid "Hide widget from taskbar"
+msgstr "Ocultar widget da barra de tarefas"
+
+msgid "Update interval"
+msgstr "Intervalo de atualização"
+
+msgid "MULTI-DEVICE HARDWARE"
+msgstr "MÚLTIPLOS DISPOSITIVOS"
+
+msgid "List multiple CPUs separately (when >1 CPU)"
+msgstr "Listar múltiplas CPUs separadamente (>1 CPU)"
+
+msgid "List multiple GPUs separately (when >1 GPU)"
+msgstr "Listar múltiplas GPUs separadamente (>1 GPU)"
+
+msgid "TASKBAR (SYSTEM TRAY) ITEMS"
+msgstr "ITENS NA BARRA DE TAREFAS (BANDEJA)"
+
+msgid "How many items stay in taskbar"
+msgstr "Quantos itens ficam na barra de tarefas"
+
+msgid "CPU power (W)"
+msgstr "Consumo CPU (W)"
+
+msgid "TASKBAR TOOLTIP SECTIONS"
+msgstr "SEÇÕES DO TOOLTIP"
+
+msgid "Source badge (daemon / local / sim)"
+msgstr "Indicador de fonte (serviço / local / sim)"
+
+msgid "CPU row"
+msgstr "Linha da CPU"
+
+msgid "GPU row"
+msgstr "Linha da GPU"
+
+msgid "Total power & peak temp row"
+msgstr "Linha de consumo total e pico térmico"
+
+msgid "RAM usage row"
+msgstr "Linha de uso de RAM"
+
+msgid "VRAM usage row"
+msgstr "Linha de uso de VRAM"
+
+msgid "GPU clocks, load & power limit"
+msgstr "Clocks, uso e limite da GPU"
+
+msgid "GPU VRAM temp, Hotspot & voltage"
+msgstr "Temp. VRAM, Hotspot e tensão da GPU"
+
+msgid "Board +12V rail"
+msgstr "Linha +12V da placa"
+
+msgid "Board voltages (+5V, +3.3V, Vcore, SoC, DRAM)"
+msgstr "Tensões da placa (+5V, +3.3V, Vcore, SoC, DRAM)"
+
+msgid "Board temperatures (VRM, Socket, Sys, PCH)"
+msgstr "Temperaturas da placa (VRM, Soquete, Sist., PCH)"
+
+msgid "Board fan speeds (RPM)"
+msgstr "Velocidade das ventoinhas (RPM)"
+
+msgid "PRESETS"
+msgstr "PREDEFINIÇÕES"
+
+msgid "Dark"
+msgstr "Escuro"
+
+msgid "Amber"
+msgstr "Âmbar"
+
+msgid "Contrast"
+msgstr "Contraste"
+
+msgid "Glass"
+msgstr "Vidro"
+
+msgid "Widget background"
+msgstr "Fundo do widget"
+
+msgid "Widget opacity"
+msgstr "Opacidade do widget"
+
+msgid "Widget border"
+msgstr "Borda do widget"
+
+msgid "Border opacity"
+msgstr "Opacidade da borda"
+
+msgid "Taskbar badge background"
+msgstr "Fundo do ícone na barra"
+
+msgid "Taskbar badge opacity"
+msgstr "Opacidade do ícone na barra"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Muted"
+msgstr "Discreto"
+
+msgid "Alert"
+msgstr "Alerta"
+
+msgid "Critical"
+msgstr "Crítico"
+
+msgid "PER-ITEM LABEL COLORS"
+msgstr "COR DO NOME DE CADA ITEM"
+
+msgid "Clear"
+msgstr "Limpar"
+
+msgid "Editing:"
+msgstr "Editando:"
+
+msgid "Reset defaults"
+msgstr "Restaurar padrão"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "Board / Footer"
+msgstr "Placa / Rodapé"
+
+msgid "Fans:"
+msgstr "Fans:"
+
+msgid "{cpus} CPU · {gpus} GPU"
+msgstr "{cpus} CPU · {gpus} GPU"
+
+msgid "General"
+msgstr "Geral"
+
+msgid "Taskbar"
+msgstr "Barra"
+
+msgid "Widget"
+msgstr "Widget"
+
+msgid "Appearance"
+msgstr "Aparência"
+
+msgid "UPDATES"
+msgstr "ATUALIZAÇÃO"
+
+msgid "WINDOW"
+msgstr "JANELA"
+
+msgid "ROWS"
+msgstr "LINHAS"
+
+msgid "GPU DETAILS"
+msgstr "DETALHES DA GPU"
+
+msgid "BOARD DETAILS"
+msgstr "DETALHES DA PLACA"
+
+msgid "WIDGET SURFACE"
+msgstr "SUPERFÍCIE DO WIDGET"
+
+msgid "TEXT & STATUS COLORS"
+msgstr "CORES DE TEXTO E ALERTA"
+
+msgid "TASKBAR BADGE"
+msgstr "ÍCONE NA BARRA"
+
+msgid "Blur behind widget"
+msgstr "Desfocar o fundo atrás do widget"
+
+msgid "Blur needs a compositor that supports it (KWin on X11) and an opacity below 100%."
+msgstr "O blur exige um compositor compatível (KWin no X11) e opacidade abaixo de 100%."
+
+msgid "Enabled metrics are shown in this order. Use the arrows to change priority."
+msgstr "As métricas ativas aparecem nesta ordem. Use as setas para mudar a prioridade."

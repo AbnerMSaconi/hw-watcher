@@ -1,0 +1,27 @@
+HW Watcher
+Copyright (C) 2026 AbnerMSaconi
+
+This program is free software: you can redistribute it and/or modify it under the terms of the
+GNU General Public License version 3 (see LICENSE). It is distributed WITHOUT ANY WARRANTY.
+
+If you redistribute this program or a modified version, you must keep this copyright notice and the
+per-file notices, state your changes, and release the complete corresponding source code under the
+same license.
+
+Third-party components and their licenses are listed in THIRD_PARTY.md.
+
+Additional terms under section 7 of the GNU General Public License v3
+----------------------------------------------------------------------
+As permitted by section 7(b) and 7(c) of the GPL v3, the following terms apply to this program:
+
+1. Author attribution. The Appropriate Legal Notices displayed by this program (the output of
+   `hw-watcher about` and the copyright line in the Control Panel footer) must keep naming
+   "AbnerMSaconi" as the original author and the original project URL. Modified versions may add
+   their own notice next to it but may not remove or replace it.
+2. Marking of modified versions. Modified versions must be plainly marked as such and must not be
+   presented as the original HW Watcher.
+3. Provenance records. The embedded record that starts with `hw-watcher-provenance;`, the SPDX and
+   copyright headers in source files, and `NOTICE` itself must be preserved in redistributed copies.
+
+The name "HW Watcher" and the author's name are not licensed for use as the name or endorsement of
+derived products.

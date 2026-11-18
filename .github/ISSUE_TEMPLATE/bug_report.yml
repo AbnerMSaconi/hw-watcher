@@ -1,0 +1,19 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Hardware report
+      description: Paste the output of `scripts/hw-report.sh` (it contains no hostname, serials or user name).
+      render: text
+    validations:
+      required: true

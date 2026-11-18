@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 AbnerMSaconi
+
+// Floating hardware panel — customizable translucent surface, per-item label colors, monospace font.
+import "../fonts/JetBrainsMono.ttf";
+export { SettingsWindow } from "settings.slint";
+
+export struct MetricRow {
+    label: string,
+    label-color: color,
+    col1: string,
+    col1-color: color,
+    col2: string,
+    col2-color: color,
+}
+
+export component Panel inherits Window {
+    in property <[MetricRow]> rows;
+    in property <string> source-badge;
+    in property <[string]> footer-lines;
+    in property <bool> keep-on-top: true;
+    in property <color> panel-bg: #141418e1;
+    in property <color> panel-border: #ffffff28;
+    in property <color> muted-color: #8a8a8a;
+    in property <color> footer-color: #8a8a8a;
+    callback drag(length, length);
+    callback drop-window();
+    callback toggle-visible();
+    callback toggle-top();
+    callback open-settings();
+    callback quit();
+
+    title: @tr("HW Watcher");
+    no-frame: true;
+    always-on-top: keep-on-top;
+    background: transparent;
+    default-font-family: "JetBrains Mono";
+    width: 310px;
+    height: body.preferred-height;
+
+    Rectangle {
+        background: panel-bg;
+        border-radius: 10px;
+        border-width: 1px;
+        border-color: panel-border;
+    }
+
+    body := VerticalLayout {
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        spacing: 4px;
+
+        HorizontalLayout {
+            Text {
+                text: @tr("ENERGY");
+                color: muted-color;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                horizontal-stretch: 1;
+            }
+            if source-badge != "": Text {
+                text: source-badge;
+                color: muted-color;
+                font-size: 10px;
+            }
+        }
+
+        for r in rows: HorizontalLayout {
+            spacing: 10px;
+            Text {
+                text: r.label;
+                color: r.label-color;
+                font-size: 13px;
+                font-weight: 600;
+                width: 60px;
+                vertical-alignment: center;
+            }
+            Text {
+                text: r.col1;
+                color: r.col1-color;
+                font-size: 13px;
+                font-weight: 600;
+                horizontal-alignment: right;
+                horizontal-stretch: 1;
+                vertical-alignment: center;
+            }
+            if r.col2 != "": Text {
+                text: r.col2;
+                color: r.col2-color;
+                font-size: 13px;
+                font-weight: 600;
+                width: 72px;
+                horizontal-alignment: right;
+                vertical-alignment: center;
+            }
+        }
+
+        if footer-lines.length > 0: Rectangle {
+            height: 1px;
+            background: panel-border;
+        }
+
+        for line in footer-lines: Text {
+            text: line;
+            color: footer-color;
+            font-size: 10px;
+            overflow: elide;
+        }
+    }
+
+    ContextMenuArea {
+        Menu {
+            MenuItem {
+                title: @tr("Control Panel...");
+                activated => { root.open-settings(); }
+            }
+            MenuItem {
+                title: @tr("Hide");
+                activated => { root.toggle-visible(); }
+            }
+            MenuItem {
+                title: keep-on-top ? @tr("✓ Always on top") : @tr("Always on top");
+                activated => { root.toggle-top(); }
+            }
+            MenuItem {
+                title: @tr("Quit");
+                activated => { root.quit(); }
+            }
+        }
+        TouchArea {
+            mouse-cursor: move;
+            moved => {
+                if (self.pressed) {
+                    root.drag(self.mouse-x - self.pressed-x, self.mouse-y - self.pressed-y);
+                }
+            }
+            pointer-event(e) => {
+                if (e.kind == PointerEventKind.up && e.button == PointerEventButton.left) {
+                    root.drop-window();
+                }
+            }
+        }
+    }
+}
